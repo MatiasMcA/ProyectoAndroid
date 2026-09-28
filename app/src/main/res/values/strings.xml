@@ -1,3 +1,28 @@
 <resources>
-    <string name="app_name">Proyecto</string>
+    <string name="app_name">VoluntariST</string>
+    <string name="main_subtitulo">Voluntariados de la Universidad Santo Tomás </string>
+    <string name="btn_iniciar_sesion">Iniciar Sesión</string>
+    <string name="btn_registrarse">Registrarse</string>
+
+    <string name="login_titulo">Iniciar Sesión</string>
+    <string name="hint_correo">Correo institucional</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="btn_ingresar">Ingresar</string>
+    <string name="login_ir_registro">¿No tienes cuenta? Regístrate</string>
+
+    <string name="registro_titulo">Crear cuenta</string>
+    <string name="hint_nombre">Nombre completo</string>
+    <string name="hint_confirmar_password">Confirmar contraseña</string>
+    <string name="btn_registrarme">Registrarme</string>
+    <string name="registro_ir_login">¿Ya tienes cuenta? Inicia sesión</string>
+
+    <string name="error_nombre_vacio">Ingresa tu nombre</string>
+    <string name="error_correo_vacio">Ingresa tu correo</string>
+    <string name="error_correo_invalido">Correo no válido</string>
+    <string name="error_password_vacia">Ingresa tu contraseña</string>
+    <string name="error_password_corta">Mínimo 6 caracteres</string>
+    <string name="error_passwords_no_coinciden">Las contraseñas no coinciden</string>
+
+    <string name="msg_login_ok">Datos ingresados correctamente</string>
+    <string name="msg_registro_ok">Registro completado</string>
 </resources>
