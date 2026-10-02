@@ -29,6 +29,15 @@
             android:name=".LoginAlumnoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaActividadesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DetalleActividadActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HistorialHorasActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -25,4 +25,13 @@
 
     <string name="msg_login_ok">Datos ingresados correctamente</string>
     <string name="msg_registro_ok">Registro completado</string>
+
+    <string name="lista_titulo">Actividades disponibles</string>
+    <string name="btn_ver_historial">Ver mi historial</string>
+    <string name="detalle_fecha">Fecha: %1$s</string>
+    <string name="detalle_lugar">Lugar: %1$s</string>
+    <string name="btn_inscribirme">Inscribirme</string>
+    <string name="msg_inscripcion_ok">Inscripción registrada</string>
+    <string name="historial_titulo">Mi historial de horas</string>
+    <string name="historial_total">Total de horas: %1$d</string>
 </resources>

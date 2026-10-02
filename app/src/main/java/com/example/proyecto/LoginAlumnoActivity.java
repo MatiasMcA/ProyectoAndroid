@@ -72,5 +72,7 @@ public class LoginAlumnoActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, R.string.msg_login_ok, Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, ListaActividadesActivity.class));
+        finish();
     }
 }
