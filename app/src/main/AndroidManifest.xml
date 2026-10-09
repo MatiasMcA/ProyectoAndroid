@@ -38,6 +38,12 @@
         <activity
             android:name=".HistorialHorasActivity"
             android:exported="false" />
+        <activity
+            android:name=".MenuPrincipalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PerfilActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

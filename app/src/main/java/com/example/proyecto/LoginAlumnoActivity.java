@@ -72,7 +72,9 @@ public class LoginAlumnoActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, R.string.msg_login_ok, Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, ListaActividadesActivity.class));
+        Intent intent = new Intent(this, MenuPrincipalActivity.class);
+        intent.putExtra("correo", correo);
+        startActivity(intent);
         finish();
     }
 }

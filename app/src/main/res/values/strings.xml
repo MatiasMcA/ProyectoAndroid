@@ -34,4 +34,16 @@
     <string name="msg_inscripcion_ok">Inscripción registrada</string>
     <string name="historial_titulo">Mi historial de horas</string>
     <string name="historial_total">Total de horas: %1$d</string>
+    <string name="menu_titulo">Menú principal</string>
+    <string name="menu_bienvenida">Hola, %1$s</string>
+    <string name="btn_ver_actividades">Ver actividades</string>
+    <string name="btn_mi_historial">Mi historial de horas</string>
+    <string name="btn_mi_perfil">Mi perfil</string>
+    <string name="perfil_titulo">Mi perfil</string>
+    <string name="perfil_nombre">Nombre: %1$s</string>
+    <string name="perfil_correo">Correo: %1$s</string>
+    <string name="perfil_carrera">Carrera: %1$s</string>
+    <string name="perfil_sede">Sede: %1$s</string>
+    <string name="perfil_horas">Horas acumuladas: %1$d</string>
+    <string name="btn_cerrar_sesion">Cerrar sesión</string>
 </resources>
