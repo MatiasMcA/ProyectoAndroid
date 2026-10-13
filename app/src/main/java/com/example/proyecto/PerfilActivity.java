@@ -19,6 +19,7 @@ public class PerfilActivity extends AppCompatActivity {
     private TextView tvSedePerfil;
     private TextView tvHorasPerfil;
     private Button btnCerrarSesion;
+    private Button btnAcerca;
 
     private String nombre = "Juan Pérez";
     private String carrera = "Ingeniería en Informática";
@@ -42,6 +43,7 @@ public class PerfilActivity extends AppCompatActivity {
         tvSedePerfil = findViewById(R.id.tvSedePerfil);
         tvHorasPerfil = findViewById(R.id.tvHorasPerfil);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnAcerca = findViewById(R.id.btnAcerca);
 
         String correo = getIntent().getStringExtra("correo");
 
@@ -50,6 +52,9 @@ public class PerfilActivity extends AppCompatActivity {
         tvCarreraPerfil.setText(getString(R.string.perfil_carrera, carrera));
         tvSedePerfil.setText(getString(R.string.perfil_sede, sede));
         tvHorasPerfil.setText(getString(R.string.perfil_horas, horas));
+
+        btnAcerca.setOnClickListener(v ->
+                startActivity(new Intent(this, AcercaActivity.class)));
 
         btnCerrarSesion.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);

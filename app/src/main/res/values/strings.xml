@@ -60,4 +60,5 @@
     <string name="acerca_version">Versión 1.0</string>
     <string name="acerca_descripcion">Aplicación para que los estudiantes de la Universidad Santo Tomás vean actividades de voluntariado, se inscriban y lleven el registro de sus horas.</string>
     <string name="acerca_proyecto">Proyecto académico - Universidad Santo Tomás</string>
+    <string name="btn_acerca">Acerca de la app</string>
 </resources>
