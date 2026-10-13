@@ -46,4 +46,7 @@
     <string name="perfil_sede">Sede: %1$s</string>
     <string name="perfil_horas">Horas acumuladas: %1$d</string>
     <string name="btn_cerrar_sesion">Cerrar sesión</string>
+
+    <string name="inscripciones_titulo">Mis inscripciones</string>
+    <string name="inscripciones_vacio">Aún no tienes inscripciones</string>
 </resources>

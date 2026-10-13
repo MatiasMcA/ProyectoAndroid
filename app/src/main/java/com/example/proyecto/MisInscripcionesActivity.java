@@ -1,0 +1,44 @@
+package com.example.proyecto;
+
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import java.util.ArrayList;
+public class MisInscripcionesActivity extends AppCompatActivity {
+
+    private ListView lvInscripciones;
+    private TextView tvVacio;
+    private ArrayList<String> inscripciones;
+    private ArrayAdapter<String> adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_mis_inscripciones);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        lvInscripciones = findViewById(R.id.lvInscripciones);
+        tvVacio = findViewById(R.id.tvVacio);
+
+        inscripciones = new ArrayList<>();
+        inscripciones.add("Apoyo escolar comuna\n12/10/2026 - Escuela Básica San Martín");
+        inscripciones.add("Jornada de reciclaje\n20/10/2026 - Plaza Prat");
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, inscripciones);
+        lvInscripciones.setAdapter(adapter);
+        lvInscripciones.setEmptyView(tvVacio);
+    }
+}
