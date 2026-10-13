@@ -17,6 +17,7 @@ public class MenuPrincipalActivity extends AppCompatActivity {
     private Button btnVerActividades;
     private Button btnMiHistorial;
     private Button btnMiPerfil;
+    private Button btnMisInscripciones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         tvBienvenida = findViewById(R.id.tvBienvenida);
         btnVerActividades = findViewById(R.id.btnVerActividades);
         btnMiHistorial = findViewById(R.id.btnMiHistorial);
+        btnMisInscripciones = findViewById(R.id.btnMisInscripciones);
         btnMiPerfil = findViewById(R.id.btnMiPerfil);
 
         String correo = getIntent().getStringExtra("correo");
@@ -48,5 +50,8 @@ public class MenuPrincipalActivity extends AppCompatActivity {
             intent.putExtra("correo", correo);
             startActivity(intent);
         });
+
+        btnMisInscripciones.setOnClickListener(view ->
+                startActivity(new Intent(this, MisInscripcionesActivity.class)));
     }
 }

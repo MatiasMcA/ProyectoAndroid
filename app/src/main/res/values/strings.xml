@@ -49,4 +49,5 @@
 
     <string name="inscripciones_titulo">Mis inscripciones</string>
     <string name="inscripciones_vacio">Aún no tienes inscripciones</string>
+    <string name="btn_mis_inscripciones">Mis inscripciones</string>
 </resources>

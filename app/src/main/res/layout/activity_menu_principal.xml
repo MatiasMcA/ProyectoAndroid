@@ -42,10 +42,23 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="24dp"
         android:text="@string/btn_ver_actividades"
-        app:layout_constraintBottom_toTopOf="@id/btnMiHistorial"
+        app:layout_constraintBottom_toTopOf="@id/btnMisInscripciones"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvBienvenida" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMisInscripciones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/btn_mis_inscripciones"
+        app:layout_constraintBottom_toTopOf="@id/btnMiHistorial"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnVerActividades" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMiHistorial"
@@ -58,7 +71,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnMiPerfil"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnVerActividades" />
+        app:layout_constraintTop_toBottomOf="@id/btnMisInscripciones" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMiPerfil"
