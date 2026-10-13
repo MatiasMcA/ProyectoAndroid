@@ -50,4 +50,9 @@
     <string name="inscripciones_titulo">Mis inscripciones</string>
     <string name="inscripciones_vacio">Aún no tienes inscripciones</string>
     <string name="btn_mis_inscripciones">Mis inscripciones</string>
+    <string name="cancelar_titulo">Cancelar inscripción</string>
+    <string name="cancelar_mensaje">¿Deseas cancelar tu inscripción en esta actividad?</string>
+    <string name="cancelar_si">Sí, cancelar</string>
+    <string name="cancelar_no">No</string>
+    <string name="msg_inscripcion_cancelada">Inscripción cancelada</string>
 </resources>

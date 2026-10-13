@@ -11,6 +11,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+
 import java.util.ArrayList;
 public class MisInscripcionesActivity extends AppCompatActivity {
 
@@ -30,6 +33,7 @@ public class MisInscripcionesActivity extends AppCompatActivity {
             return insets;
         });
 
+
         lvInscripciones = findViewById(R.id.lvInscripciones);
         tvVacio = findViewById(R.id.tvVacio);
 
@@ -40,5 +44,20 @@ public class MisInscripcionesActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, inscripciones);
         lvInscripciones.setAdapter(adapter);
         lvInscripciones.setEmptyView(tvVacio);
+        lvInscripciones.setOnItemClickListener((parent, view, position, id) ->
+                mostrarDialogoCancelar(position));
+    }
+
+    private void mostrarDialogoCancelar(int position) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.cancelar_titulo)
+                .setMessage(R.string.cancelar_mensaje)
+                .setPositiveButton(R.string.cancelar_si, (dialog, which) -> {
+                    inscripciones.remove(position);
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(this, R.string.msg_inscripcion_cancelada, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.cancelar_no, null)
+                .show();
     }
 }
