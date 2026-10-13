@@ -47,6 +47,9 @@
         <activity
             android:name=".MisInscripcionesActivity"
             android:exported="false" />
+        <activity
+            android:name=".AcercaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

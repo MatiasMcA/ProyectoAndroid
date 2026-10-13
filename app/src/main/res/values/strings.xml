@@ -55,4 +55,9 @@
     <string name="cancelar_si">Sí, cancelar</string>
     <string name="cancelar_no">No</string>
     <string name="msg_inscripcion_cancelada">Inscripción cancelada</string>
+
+    <string name="acerca_titulo">Acerca de la app</string>
+    <string name="acerca_version">Versión 1.0</string>
+    <string name="acerca_descripcion">Aplicación para que los estudiantes de la Universidad Santo Tomás vean actividades de voluntariado, se inscriban y lleven el registro de sus horas.</string>
+    <string name="acerca_proyecto">Proyecto académico - Universidad Santo Tomás</string>
 </resources>
