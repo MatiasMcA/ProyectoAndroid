@@ -6,6 +6,7 @@ import android.util.Patterns;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Spinner;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,8 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
     private TextInputEditText etConfirmar;
     private Button btnRegistrarme;
     private TextView tvIrLogin;
+    private Spinner spCarrera;
+    private VoluntariadoDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,8 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
         etConfirmar = findViewById(R.id.etConfirmar);
         btnRegistrarme = findViewById(R.id.btnRegistrarme);
         tvIrLogin = findViewById(R.id.tvIrLogin);
+        spCarrera = findViewById(R.id.spCarrera);
+        dbHelper = new VoluntariadoDbHelper(this);
 
         btnRegistrarme.setOnClickListener(view -> validarRegistro());
 
@@ -89,6 +94,19 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
 
         if (!password.equals(confirmar)) {
             tilConfirmar.setError(getString(R.string.error_passwords_no_coinciden));
+            return;
+        }
+
+        if (dbHelper.existeCorreo(correo)) {
+            tilCorreo.setError(getString(R.string.error_correo_existente));
+            return;
+        }
+
+        String carrera = spCarrera.getSelectedItem().toString();
+        long resultado = dbHelper.insertarUsuario(nombre, correo, password, carrera);
+
+        if (resultado == -1) {
+            Toast.makeText(this, R.string.error_registro, Toast.LENGTH_SHORT).show();
             return;
         }
 

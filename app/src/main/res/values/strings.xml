@@ -61,4 +61,14 @@
     <string name="acerca_descripcion">Aplicación para que los estudiantes de la Universidad Santo Tomás vean actividades de voluntariado, se inscriban y lleven el registro de sus horas.</string>
     <string name="acerca_proyecto">Proyecto académico - Universidad Santo Tomás</string>
     <string name="btn_acerca">Acerca de la app</string>
+
+    <string name="error_correo_existente">Este correo ya está registrado</string>
+    <string name="error_registro">No se pudo completar el registro</string>
+    <string-array name="carreras">
+        <item>Ingeniería en Informática</item>
+        <item>Ingeniería en Administración</item>
+        <item>Técnico en Enfermería</item>
+        <item>Psicología</item>
+        <item>Otra</item>
+    </string-array>
 </resources>
