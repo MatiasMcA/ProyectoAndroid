@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
+import android.database.Cursor;
+import com.example.proyecto.VoluntariadoContract.UsuarioEntry;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,9 +22,6 @@ public class PerfilActivity extends AppCompatActivity {
     private TextView tvHorasPerfil;
     private Button btnCerrarSesion;
     private Button btnAcerca;
-
-    private String nombre = "Juan Pérez";
-    private String carrera = "Ingeniería en Informática";
     private String sede = "Santo Tomás Iquique";
     private int horas = 5;
 
@@ -46,6 +45,16 @@ public class PerfilActivity extends AppCompatActivity {
         btnAcerca = findViewById(R.id.btnAcerca);
 
         String correo = getIntent().getStringExtra("correo");
+
+        VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(this);
+        Cursor cursor = dbHelper.obtenerUsuario(correo);
+        String nombre = "";
+        String carrera = "";
+        if (cursor.moveToFirst()) {
+            nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
+            carrera = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_CARRERA));
+        }
+        cursor.close();
 
         tvNombrePerfil.setText(getString(R.string.perfil_nombre, nombre));
         tvCorreoPerfil.setText(getString(R.string.perfil_correo, correo));
