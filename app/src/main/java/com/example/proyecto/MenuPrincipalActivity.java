@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
+import android.database.Cursor;
+import com.example.proyecto.VoluntariadoContract.UsuarioEntry;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,7 +39,14 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         btnMiPerfil = findViewById(R.id.btnMiPerfil);
 
         String correo = getIntent().getStringExtra("correo");
-        tvBienvenida.setText(getString(R.string.menu_bienvenida, correo));
+        VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(this);
+        Cursor cursor = dbHelper.obtenerUsuario(correo);
+        String nombre = "";
+        if (cursor.moveToFirst()) {
+            nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
+        }
+        cursor.close();
+        tvBienvenida.setText(getString(R.string.menu_bienvenida, nombre));
 
         btnVerActividades.setOnClickListener(v ->
                 startActivity(new Intent(this, ListaActividadesActivity.class)));
