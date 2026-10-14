@@ -24,6 +24,7 @@ public class LoginAlumnoActivity extends AppCompatActivity {
     private TextInputEditText etPassword;
     private Button btnIngresar;
     private TextView tvIrRegistro;
+    private VoluntariadoDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class LoginAlumnoActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnIngresar = findViewById(R.id.btnIngresar);
         tvIrRegistro = findViewById(R.id.tvIrRegistro);
+        dbHelper = new VoluntariadoDbHelper(this);
 
         btnIngresar.setOnClickListener(view -> validarLogin());
 
@@ -68,6 +70,11 @@ public class LoginAlumnoActivity extends AppCompatActivity {
 
         if (password.isEmpty()) {
             tilPassword.setError(getString(R.string.error_password_vacia));
+            return;
+        }
+
+        if (!dbHelper.validarLogin(correo, password)) {
+            tilPassword.setError(getString(R.string.error_credenciales));
             return;
         }
 
