@@ -72,4 +72,5 @@
         <item>Otra</item>
     </string-array>
     <string name="error_credenciales">Correo o contraseña incorrectos</string>
+    <string name="btn_volver">Volver</string>
 </resources>

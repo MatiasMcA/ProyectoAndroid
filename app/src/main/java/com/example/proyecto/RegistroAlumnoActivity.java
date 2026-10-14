@@ -43,6 +43,8 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
             return insets;
         });
 
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
         tilNombre = findViewById(R.id.tilNombre);
         tilCorreo = findViewById(R.id.tilCorreo);
         tilPassword = findViewById(R.id.tilPassword);

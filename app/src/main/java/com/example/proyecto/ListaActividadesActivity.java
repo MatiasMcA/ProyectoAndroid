@@ -52,6 +52,8 @@ public class ListaActividadesActivity extends AppCompatActivity {
             return insets;
         });
 
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
         lvActividades = findViewById(R.id.lvActividades);
         btnVerHistorial = findViewById(R.id.btnVerHistorial);
 

@@ -33,6 +33,8 @@ public class HistorialHorasActivity extends AppCompatActivity {
             return insets;
         });
 
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
         lvHistorial = findViewById(R.id.lvHistorial);
         tvTotalHoras = findViewById(R.id.tvTotalHoras);
 

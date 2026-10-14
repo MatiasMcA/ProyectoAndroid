@@ -30,6 +30,8 @@ public class DetalleActividadActivity extends AppCompatActivity {
             return insets;
         });
 
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
         tvNombre = findViewById(R.id.tvNombre);
         tvFecha = findViewById(R.id.tvFecha);
         tvLugar = findViewById(R.id.tvLugar);

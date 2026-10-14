@@ -33,6 +33,8 @@ public class MisInscripcionesActivity extends AppCompatActivity {
             return insets;
         });
 
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
 
         lvInscripciones = findViewById(R.id.lvInscripciones);
         tvVacio = findViewById(R.id.tvVacio);

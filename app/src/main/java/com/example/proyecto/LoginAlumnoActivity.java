@@ -37,6 +37,8 @@ public class LoginAlumnoActivity extends AppCompatActivity {
             return insets;
         });
 
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
         tilCorreo = findViewById(R.id.tilCorreo);
         tilPassword = findViewById(R.id.tilPassword);
         etCorreo = findViewById(R.id.etCorreo);

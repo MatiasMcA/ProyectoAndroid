@@ -36,6 +36,8 @@ public class PerfilActivity extends AppCompatActivity {
             return insets;
         });
 
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
         tvNombrePerfil = findViewById(R.id.tvNombrePerfil);
         tvCorreoPerfil = findViewById(R.id.tvCorreoPerfil);
         tvCarreraPerfil = findViewById(R.id.tvCarreraPerfil);
