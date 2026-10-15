@@ -83,4 +83,7 @@
     <string name="opcion_cancelar">Cancelar inscripción</string>
     <string name="msg_inscripcion_completada">Actividad marcada como completada</string>
     <string name="historial_item">%1$s - %2$d horas</string>
+
+    <string name="btn_ver_en_maps">Ver en Google Maps</string>
+    <string name="msg_sin_app_mapas">No hay una aplicación de mapas instalada</string>
 </resources>

@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +27,8 @@ public class DetalleActividadActivity extends AppCompatActivity {
     private VoluntariadoDbHelper dbHelper;
     private String correo;
     private long actividadId;
+    private double latitud;
+    private double longitud;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +60,13 @@ public class DetalleActividadActivity extends AppCompatActivity {
             tvFecha.setText(getString(R.string.detalle_fecha, fecha));
             tvLugar.setText(getString(R.string.detalle_lugar, lugar));
             tvDescripcion.setText(cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_DESCRIPCION)));
+            latitud = cursor.getDouble(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LATITUD));
+            longitud = cursor.getDouble(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LONGITUD));
         }
         cursor.close();
 
         btnInscribirme.setOnClickListener(v -> inscribirse());
+        findViewById(R.id.btnVerMapaDetalle).setOnClickListener(view -> abrirEnMapa());
     }
 
     private void inscribirse() {
@@ -74,6 +82,17 @@ public class DetalleActividadActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.error_sin_cupos, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, R.string.error_inscripcion, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void abrirEnMapa() {
+        String nombre = Uri.encode(tvNombre.getText().toString());
+        Uri uri = Uri.parse("geo:" + latitud + "," + longitud + "?q=" + latitud + "," + longitud + "(" + nombre + ")");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.msg_sin_app_mapas, Toast.LENGTH_SHORT).show();
         }
     }
 }
