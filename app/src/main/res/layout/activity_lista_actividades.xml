@@ -33,17 +33,17 @@
         app:layout_constraintTop_toBottomOf="@id/btnVolver" />
 
     <ListView
-        android:id="@+id/lvActividades"
+        android:id="@+id/rvActividades"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnVerHistorial"
+        app:layout_constraintBottom_toTopOf="@id/btnVerHistorial"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTituloLista" />
+        app:layout_constraintTop_toBottomOf="@id/tvTituloLista" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnVerHistorial"

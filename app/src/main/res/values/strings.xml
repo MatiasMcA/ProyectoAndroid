@@ -73,4 +73,5 @@
     </string-array>
     <string name="error_credenciales">Correo o contraseña incorrectos</string>
     <string name="btn_volver">Volver</string>
+    <string name="item_cupos">Cupos disponibles: %1$d</string>
 </resources>

@@ -48,19 +48,18 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         cursor.close();
         tvBienvenida.setText(getString(R.string.menu_bienvenida, nombre));
 
-        btnVerActividades.setOnClickListener(v ->
-                startActivity(new Intent(this, ListaActividadesActivity.class)));
+        btnVerActividades.setOnClickListener(v -> abrirPantalla(ListaActividadesActivity.class, correo));
 
-        btnMiHistorial.setOnClickListener(v ->
-                startActivity(new Intent(this, HistorialHorasActivity.class)));
+        btnMiHistorial.setOnClickListener(v -> abrirPantalla(HistorialHorasActivity.class, correo));
 
-        btnMiPerfil.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PerfilActivity.class);
-            intent.putExtra("correo", correo);
-            startActivity(intent);
-        });
+        btnMiPerfil.setOnClickListener(v -> abrirPantalla(PerfilActivity.class, correo));
 
-        btnMisInscripciones.setOnClickListener(view ->
-                startActivity(new Intent(this, MisInscripcionesActivity.class)));
+        btnMisInscripciones.setOnClickListener(v -> abrirPantalla(MisInscripcionesActivity.class, correo));
+    }
+
+    private void abrirPantalla(Class<?> destino, String correo) {
+        Intent intent = new Intent(this, destino);
+        intent.putExtra("correo", correo);
+        startActivity(intent);
     }
 }

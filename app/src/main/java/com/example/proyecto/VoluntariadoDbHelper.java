@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import java.util.ArrayList;
 
 import com.example.proyecto.VoluntariadoContract.ActividadEntry;
 import com.example.proyecto.VoluntariadoContract.InscripcionEntry;
@@ -135,6 +136,32 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 null,
                 UsuarioEntry.COLUMN_CORREO + " = ?",
                 new String[]{correo},
+                null, null, null);
+    }
+
+    public ArrayList<Actividad> obtenerActividades() {
+        ArrayList<Actividad> lista = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(ActividadEntry.TABLE_NAME, null, null, null, null, null,
+                ActividadEntry._ID + " ASC");
+        while (cursor.moveToNext()) {
+            long id = cursor.getLong(cursor.getColumnIndexOrThrow(ActividadEntry._ID));
+            String nombre = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_NOMBRE));
+            String fecha = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_FECHA));
+            String lugar = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LUGAR));
+            int cupos = cursor.getInt(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_CUPOS));
+            lista.add(new Actividad(id, nombre, fecha, lugar, cupos));
+        }
+        cursor.close();
+        return lista;
+    }
+
+    public Cursor obtenerActividad(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(ActividadEntry.TABLE_NAME,
+                null,
+                ActividadEntry._ID + " = ?",
+                new String[]{String.valueOf(id)},
                 null, null, null);
     }
 }

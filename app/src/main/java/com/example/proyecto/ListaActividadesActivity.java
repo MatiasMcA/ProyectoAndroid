@@ -2,44 +2,24 @@ package com.example.proyecto;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 public class ListaActividadesActivity extends AppCompatActivity {
 
-    private ListView lvActividades;
+    private RecyclerView rvActividades;
     private Button btnVerHistorial;
-
-    private String[] nombres = {
-            "Apoyo escolar comuna",
-            "Jornada de reciclaje",
-            "Acompañamiento adulto mayor"
-    };
-
-    private String[] fechas = {
-            "12/10/2026",
-            "20/10/2026",
-            "28/10/2026"
-    };
-
-    private String[] lugares = {
-            "Escuela Básica San Martín",
-            "Plaza Prat",
-            "Hogar de Ancianos Santo Tomás"
-    };
-
-    private String[] descripciones = {
-            "Apoyo en tareas y reforzamiento escolar para niños.",
-            "Recolección y clasificación de materiales reciclables.",
-            "Actividades recreativas con adultos mayores del hogar"
-    };
+    private VoluntariadoDbHelper dbHelper;
+    private String correo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,30 +31,36 @@ public class ListaActividadesActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
-        lvActividades = findViewById(R.id.lvActividades);
+        rvActividades = findViewById(R.id.rvActividades);
         btnVerHistorial = findViewById(R.id.btnVerHistorial);
 
-        String[] items = new String[nombres.length];
-        for (int i = 0; i < nombres.length; i++) {
-            items[i] = nombres[i] + "\n" + fechas[i] + " - " + lugares[i];
-        }
+        correo = getIntent().getStringExtra("correo");
+        dbHelper = new VoluntariadoDbHelper(this);
+        rvActividades.setLayoutManager(new LinearLayoutManager(this));
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-        lvActividades.setAdapter(adapter);
-
-        lvActividades.setOnItemClickListener((parent, view, position, id) -> {
-            Intent intent = new Intent(this, DetalleActividadActivity.class);
-            intent.putExtra("nombre", nombres[position]);
-            intent.putExtra("fecha", fechas[position]);
-            intent.putExtra("lugar", lugares[position]);
-            intent.putExtra("descripcion", descripciones[position]);
+        btnVerHistorial.setOnClickListener(v -> {
+            Intent intent = new Intent(this, HistorialHorasActivity.class);
+            intent.putExtra("correo", correo);
             startActivity(intent);
         });
+    }
 
-        btnVerHistorial.setOnClickListener(v ->
-                startActivity(new Intent(this, HistorialHorasActivity.class)));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarActividades();
+    }
+
+    private void cargarActividades() {
+        ArrayList<Actividad> actividades = dbHelper.obtenerActividades();
+        ActividadAdapter adapter = new ActividadAdapter(actividades, actividad -> {
+            Intent intent = new Intent(this, DetalleActividadActivity.class);
+            intent.putExtra("correo", correo);
+            intent.putExtra("actividad_id", actividad.getId());
+            startActivity(intent);
+        });
+        rvActividades.setAdapter(adapter);
     }
 }
