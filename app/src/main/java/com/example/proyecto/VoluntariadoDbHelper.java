@@ -14,6 +14,13 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "voluntariado.db";
     private static final int DATABASE_VERSION = 1;
+    public static final String ESTADO_INSCRITO = "Inscrito";
+    public static final String ESTADO_COMPLETADA = "Completada";
+    public static final int RESULTADO_OK = 0;
+    public static final int RESULTADO_YA_INSCRITO = 1;
+    public static final int RESULTADO_SIN_CUPOS = 2;
+    public static final int RESULTADO_ERROR = 3;
+
 
     private static final String SQL_CREATE_USUARIOS =
             "CREATE TABLE " + UsuarioEntry.TABLE_NAME + " (" +
@@ -163,5 +170,61 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 ActividadEntry._ID + " = ?",
                 new String[]{String.valueOf(id)},
                 null, null, null);
+    }
+
+    public long obtenerUsuarioId(String correo) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(UsuarioEntry.TABLE_NAME,
+                new String[]{UsuarioEntry._ID},
+                UsuarioEntry.COLUMN_CORREO + " = ?",
+                new String[]{correo},
+                null, null, null);
+        long id = -1;
+        if (cursor.moveToFirst()) {
+            id = cursor.getLong(0);
+        }
+        cursor.close();
+        return id;
+    }
+
+    public int inscribirUsuario(long usuarioId, long actividadId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        Cursor existente = db.query(InscripcionEntry.TABLE_NAME,
+                new String[]{InscripcionEntry._ID},
+                InscripcionEntry.COLUMN_USUARIO_ID + " = ? AND " + InscripcionEntry.COLUMN_ACTIVIDAD_ID + " = ?",
+                new String[]{String.valueOf(usuarioId), String.valueOf(actividadId)},
+                null, null, null);
+        boolean yaInscrito = existente.getCount() > 0;
+        existente.close();
+        if (yaInscrito) {
+            return RESULTADO_YA_INSCRITO;
+        }
+
+        Cursor actividad = obtenerActividad(actividadId);
+        int cupos = 0;
+        if (actividad.moveToFirst()) {
+            cupos = actividad.getInt(actividad.getColumnIndexOrThrow(ActividadEntry.COLUMN_CUPOS));
+        }
+        actividad.close();
+        if (cupos <= 0) {
+            return RESULTADO_SIN_CUPOS;
+        }
+
+        ContentValues valores = new ContentValues();
+        valores.put(InscripcionEntry.COLUMN_USUARIO_ID, usuarioId);
+        valores.put(InscripcionEntry.COLUMN_ACTIVIDAD_ID, actividadId);
+        valores.put(InscripcionEntry.COLUMN_ESTADO, ESTADO_INSCRITO);
+        long resultado = db.insert(InscripcionEntry.TABLE_NAME, null, valores);
+        if (resultado == -1) {
+            return RESULTADO_ERROR;
+        }
+
+        ContentValues nuevosCupos = new ContentValues();
+        nuevosCupos.put(ActividadEntry.COLUMN_CUPOS, cupos - 1);
+        db.update(ActividadEntry.TABLE_NAME, nuevosCupos,
+                ActividadEntry._ID + " = ?",
+                new String[]{String.valueOf(actividadId)});
+        return RESULTADO_OK;
     }
 }

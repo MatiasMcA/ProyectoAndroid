@@ -58,9 +58,22 @@ public class DetalleActividadActivity extends AppCompatActivity {
         }
         cursor.close();
 
-        btnInscribirme.setOnClickListener(v -> {
+        btnInscribirme.setOnClickListener(v -> inscribirse());
+    }
+
+    private void inscribirse() {
+        long usuarioId = dbHelper.obtenerUsuarioId(correo);
+        int resultado = dbHelper.inscribirUsuario(usuarioId, actividadId);
+
+        if (resultado == VoluntariadoDbHelper.RESULTADO_OK) {
             Toast.makeText(this, R.string.msg_inscripcion_ok, Toast.LENGTH_SHORT).show();
             finish();
-        });
+        } else if (resultado == VoluntariadoDbHelper.RESULTADO_YA_INSCRITO) {
+            Toast.makeText(this, R.string.error_ya_inscrito, Toast.LENGTH_SHORT).show();
+        } else if (resultado == VoluntariadoDbHelper.RESULTADO_SIN_CUPOS) {
+            Toast.makeText(this, R.string.error_sin_cupos, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.error_inscripcion, Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -74,4 +74,7 @@
     <string name="error_credenciales">Correo o contraseña incorrectos</string>
     <string name="btn_volver">Volver</string>
     <string name="item_cupos">Cupos disponibles: %1$d</string>
+    <string name="error_ya_inscrito">Ya estás inscrito en esta actividad</string>
+    <string name="error_sin_cupos">No quedan cupos disponibles</string>
+    <string name="error_inscripcion">No se pudo completar la inscripción</string>
 </resources>
