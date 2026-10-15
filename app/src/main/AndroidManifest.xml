@@ -55,6 +55,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="PENDIENTE" />
+        <activity
+            android:name=".MapaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -278,4 +278,10 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         cursor.close();
         return total;
     }
+
+    public Cursor obtenerTodasLasActividades() {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(ActividadEntry.TABLE_NAME, null, null, null, null, null,
+                ActividadEntry._ID + " ASC");
+    }
 }

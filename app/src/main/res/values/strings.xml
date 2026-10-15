@@ -86,4 +86,6 @@
 
     <string name="btn_ver_en_maps">Ver en Google Maps</string>
     <string name="msg_sin_app_mapas">No hay una aplicación de mapas instalada</string>
+    <string name="mapa_titulo">Mapa de actividades</string>
+    <string name="btn_ver_mapa">Mapa de actividades</string>
 </resources>
