@@ -1,5 +1,6 @@
 package com.example.proyecto;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -21,6 +22,7 @@ public class MenuPrincipalActivity extends AppCompatActivity {
     private Button btnMiPerfil;
     private Button btnMisInscripciones;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         btnMiPerfil.setOnClickListener(v -> abrirPantalla(PerfilActivity.class, correo));
 
         btnMisInscripciones.setOnClickListener(v -> abrirPantalla(MisInscripcionesActivity.class, correo));
+        findViewById(R.id.btnVerMapa).setOnClickListener(view -> abrirPantalla(MapaActivity.class, correo));
     }
 
     private void abrirPantalla(Class<?> destino, String correo) {

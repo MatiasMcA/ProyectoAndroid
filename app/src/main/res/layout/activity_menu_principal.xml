@@ -55,10 +55,23 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:text="@string/btn_mis_inscripciones"
-        app:layout_constraintBottom_toTopOf="@id/btnMiHistorial"
+        app:layout_constraintBottom_toTopOf="@id/btnVerMapa"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnVerActividades" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnVerMapa"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/btn_ver_mapa"
+        app:layout_constraintBottom_toTopOf="@id/btnMiHistorial"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnMisInscripciones" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMiHistorial"
@@ -71,7 +84,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnMiPerfil"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnMisInscripciones" />
+        app:layout_constraintTop_toBottomOf="@id/btnVerMapa" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMiPerfil"
