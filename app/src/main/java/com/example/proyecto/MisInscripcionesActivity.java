@@ -52,7 +52,7 @@ public class MisInscripcionesActivity extends AppCompatActivity {
         lvInscripciones.setAdapter(adapter);
         lvInscripciones.setEmptyView(tvVacio);
         lvInscripciones.setOnItemClickListener((parent, view, position, id) ->
-                mostrarDialogoCancelar(position));
+                mostrarOpciones(position));
 
         cargarInscripciones();
     }
@@ -72,6 +72,22 @@ public class MisInscripcionesActivity extends AppCompatActivity {
         }
         cursor.close();
         adapter.notifyDataSetChanged();
+    }
+
+    private void mostrarOpciones(int position) {
+        String[] opciones = {getString(R.string.opcion_completar), getString(R.string.opcion_cancelar)};
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.opciones_titulo)
+                .setItems(opciones, (dialog, which) -> {
+                    if (which == 0) {
+                        dbHelper.completarInscripcion(inscripcionIds.get(position));
+                        cargarInscripciones();
+                        Toast.makeText(this, R.string.msg_inscripcion_completada, Toast.LENGTH_SHORT).show();
+                    } else {
+                        mostrarDialogoCancelar(position);
+                    }
+                })
+                .show();
     }
 
     private void mostrarDialogoCancelar(int position) {

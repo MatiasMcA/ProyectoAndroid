@@ -23,7 +23,6 @@ public class PerfilActivity extends AppCompatActivity {
     private Button btnCerrarSesion;
     private Button btnAcerca;
     private String sede = "Santo Tomás Iquique";
-    private int horas = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +56,8 @@ public class PerfilActivity extends AppCompatActivity {
             carrera = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_CARRERA));
         }
         cursor.close();
+
+        int horas = dbHelper.obtenerTotalHoras(dbHelper.obtenerUsuarioId(correo));
 
         tvNombrePerfil.setText(getString(R.string.perfil_nombre, nombre));
         tvCorreoPerfil.setText(getString(R.string.perfil_correo, correo));

@@ -253,4 +253,29 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                         " = " + ActividadEntry.COLUMN_CUPOS + " + 1 WHERE " + ActividadEntry._ID + " = ?",
                 new Object[]{actividadId});
     }
+
+    public void completarInscripcion(long inscripcionId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues valores = new ContentValues();
+        valores.put(InscripcionEntry.COLUMN_ESTADO, ESTADO_COMPLETADA);
+        db.update(InscripcionEntry.TABLE_NAME, valores,
+                InscripcionEntry._ID + " = ?",
+                new String[]{String.valueOf(inscripcionId)});
+    }
+
+    public int obtenerTotalHoras(long usuarioId) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT SUM(a." + ActividadEntry.COLUMN_HORAS + ") FROM " +
+                InscripcionEntry.TABLE_NAME + " i INNER JOIN " + ActividadEntry.TABLE_NAME +
+                " a ON i." + InscripcionEntry.COLUMN_ACTIVIDAD_ID + " = a." + ActividadEntry._ID +
+                " WHERE i." + InscripcionEntry.COLUMN_USUARIO_ID + " = ? AND i." +
+                InscripcionEntry.COLUMN_ESTADO + " = ?";
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(usuarioId), ESTADO_COMPLETADA});
+        int total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+        cursor.close();
+        return total;
+    }
 }
