@@ -227,4 +227,30 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(actividadId)});
         return RESULTADO_OK;
     }
+
+    public Cursor obtenerInscripciones(long usuarioId, String estado) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT i." + InscripcionEntry._ID + " AS inscripcion_id, " +
+                "a." + ActividadEntry._ID + " AS actividad_id, " +
+                "a." + ActividadEntry.COLUMN_NOMBRE + ", " +
+                "a." + ActividadEntry.COLUMN_FECHA + ", " +
+                "a." + ActividadEntry.COLUMN_LUGAR + ", " +
+                "a." + ActividadEntry.COLUMN_HORAS +
+                " FROM " + InscripcionEntry.TABLE_NAME + " i INNER JOIN " +
+                ActividadEntry.TABLE_NAME + " a ON i." + InscripcionEntry.COLUMN_ACTIVIDAD_ID +
+                " = a." + ActividadEntry._ID +
+                " WHERE i." + InscripcionEntry.COLUMN_USUARIO_ID + " = ? AND i." +
+                InscripcionEntry.COLUMN_ESTADO + " = ?";
+        return db.rawQuery(sql, new String[]{String.valueOf(usuarioId), estado});
+    }
+
+    public void cancelarInscripcion(long inscripcionId, long actividadId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(InscripcionEntry.TABLE_NAME,
+                InscripcionEntry._ID + " = ?",
+                new String[]{String.valueOf(inscripcionId)});
+        db.execSQL("UPDATE " + ActividadEntry.TABLE_NAME + " SET " + ActividadEntry.COLUMN_CUPOS +
+                        " = " + ActividadEntry.COLUMN_CUPOS + " + 1 WHERE " + ActividadEntry._ID + " = ?",
+                new Object[]{actividadId});
+    }
 }
