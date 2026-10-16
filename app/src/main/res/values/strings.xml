@@ -91,4 +91,5 @@
     <string name="msg_permiso_denegado">Permiso de ubicación denegado</string>
     <string name="msg_ubicacion_no_disponible">No se pudo obtener tu ubicación</string>
     <string name="marcador_usuario">Tu ubicación</string>
+    <string name="msg_lista_actualizada">Lista actualizada</string>
 </resources>
