@@ -4,6 +4,9 @@ import android.provider.BaseColumns;
 
 public final class VoluntariadoContract {
 
+    public static final String DATABASE_NAME = "voluntariado.db";
+    public static final int DATABASE_VERSION = 2;
+
     private VoluntariadoContract() {
     }
 
@@ -32,5 +35,11 @@ public final class VoluntariadoContract {
         public static final String COLUMN_USUARIO_ID = "usuario_id";
         public static final String COLUMN_ACTIVIDAD_ID = "actividad_id";
         public static final String COLUMN_ESTADO = "estado";
+
+        public static final String ESTADO_INSCRITO = "Inscrito";
+        public static final String ESTADO_COMPLETADA = "Completada";
+
+        public static final String ALIAS_INSCRIPCION_ID = "inscripcion_id";
+        public static final String ALIAS_ACTIVIDAD_ID = "actividad_id";
     }
 }
