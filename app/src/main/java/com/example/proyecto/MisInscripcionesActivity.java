@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyecto.VoluntariadoContract.ActividadEntry;
+import com.example.proyecto.VoluntariadoContract.InscripcionEntry;
 
 import java.util.ArrayList;
 
@@ -63,8 +64,8 @@ public class MisInscripcionesActivity extends AppCompatActivity {
         actividadIds.clear();
         Cursor cursor = dbHelper.obtenerInscripciones(usuarioId, VoluntariadoDbHelper.ESTADO_INSCRITO);
         while (cursor.moveToNext()) {
-            inscripcionIds.add(cursor.getLong(cursor.getColumnIndexOrThrow("inscripcion_id")));
-            actividadIds.add(cursor.getLong(cursor.getColumnIndexOrThrow("actividad_id")));
+            inscripcionIds.add(cursor.getLong(cursor.getColumnIndexOrThrow(InscripcionEntry.ALIAS_INSCRIPCION_ID)));
+            actividadIds.add(cursor.getLong(cursor.getColumnIndexOrThrow(InscripcionEntry.ALIAS_ACTIVIDAD_ID)));
             String nombre = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_NOMBRE));
             String fecha = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_FECHA));
             String lugar = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LUGAR));
