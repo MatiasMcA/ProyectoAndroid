@@ -48,6 +48,7 @@ public class MenuPrincipalActivity extends AppCompatActivity {
             nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
         }
         cursor.close();
+        dbHelper.close();
         tvBienvenida.setText(getString(R.string.menu_bienvenida, nombre));
 
         btnVerActividades.setOnClickListener(v -> abrirPantalla(ListaActividadesActivity.class, correo));

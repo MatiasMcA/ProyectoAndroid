@@ -58,6 +58,7 @@ public class PerfilActivity extends AppCompatActivity {
         cursor.close();
 
         int horas = dbHelper.obtenerTotalHoras(dbHelper.obtenerUsuarioId(correo));
+        dbHelper.close();
 
         tvNombrePerfil.setText(getString(R.string.perfil_nombre, nombre));
         tvCorreoPerfil.setText(getString(R.string.perfil_correo, correo));

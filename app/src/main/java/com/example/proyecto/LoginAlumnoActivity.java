@@ -86,4 +86,10 @@ public class LoginAlumnoActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    @Override
+    protected void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
+    }
 }

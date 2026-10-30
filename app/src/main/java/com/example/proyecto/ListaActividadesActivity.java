@@ -88,6 +88,7 @@ public class ListaActividadesActivity extends AppCompatActivity implements Senso
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        executor.execute(dbHelper::close);
         executor.shutdown();
     }
 

@@ -120,4 +120,10 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
         startActivity(new Intent(this, LoginAlumnoActivity.class));
         finish();
     }
+
+    @Override
+    protected void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
+    }
 }

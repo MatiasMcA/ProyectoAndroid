@@ -103,4 +103,10 @@ public class MisInscripcionesActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancelar_no, null)
                 .show();
     }
+
+    @Override
+    protected void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
+    }
 }

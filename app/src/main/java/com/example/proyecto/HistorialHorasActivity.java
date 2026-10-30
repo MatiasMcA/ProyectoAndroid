@@ -60,6 +60,7 @@ public class HistorialHorasActivity extends AppCompatActivity {
             }
             cursor.close();
             int total = dbHelper.obtenerTotalHoras(usuarioId);
+            dbHelper.close();
 
             handlerPrincipal.post(() -> {
                 if (isDestroyed()) {

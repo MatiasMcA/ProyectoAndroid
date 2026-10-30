@@ -95,4 +95,10 @@ public class DetalleActividadActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.msg_sin_app_mapas, Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
+    }
 }
