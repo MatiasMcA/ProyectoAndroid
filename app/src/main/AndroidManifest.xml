@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.auth.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -24,39 +24,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegistroAlumnoActivity"
+            android:name=".ui.auth.RegistroAlumnoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".LoginAlumnoActivity"
+            android:name=".ui.auth.LoginAlumnoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ListaActividadesActivity"
+            android:name=".ui.actividades.ListaActividadesActivity"
             android:exported="false" />
         <activity
-            android:name=".DetalleActividadActivity"
+            android:name=".ui.actividades.DetalleActividadActivity"
             android:exported="false" />
         <activity
-            android:name=".HistorialHorasActivity"
+            android:name=".ui.actividades.HistorialHorasActivity"
             android:exported="false" />
         <activity
-            android:name=".MenuPrincipalActivity"
+            android:name=".ui.menu.MenuPrincipalActivity"
             android:exported="false" />
         <activity
-            android:name=".PerfilActivity"
+            android:name=".ui.menu.PerfilActivity"
             android:exported="false" />
         <activity
-            android:name=".MisInscripcionesActivity"
+            android:name=".ui.actividades.MisInscripcionesActivity"
             android:exported="false" />
         <activity
-            android:name=".AcercaActivity"
+            android:name=".ui.menu.AcercaActivity"
             android:exported="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="PENDIENTE" />
         <activity
-            android:name=".MapaActivity"
+            android:name=".ui.actividades.MapaActivity"
             android:exported="false" />
     </application>
 

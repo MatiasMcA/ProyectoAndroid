@@ -1,4 +1,4 @@
-package com.example.proyecto;
+package com.example.proyecto.ui.actividades;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.proyecto.R;
+import com.example.proyecto.adapter.ActividadAdapter;
+import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.model.Actividad;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;

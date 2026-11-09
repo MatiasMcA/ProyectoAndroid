@@ -1,4 +1,4 @@
-package com.example.proyecto;
+package com.example.proyecto.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,9 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.proyecto.VoluntariadoContract.ActividadEntry;
-import com.example.proyecto.VoluntariadoContract.InscripcionEntry;
-import com.example.proyecto.VoluntariadoContract.UsuarioEntry;
+import com.example.proyecto.model.Actividad;
+import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
+import com.example.proyecto.data.VoluntariadoContract.InscripcionEntry;
+import com.example.proyecto.data.VoluntariadoContract.UsuarioEntry;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.proyecto;
+package com.example.proyecto.data;
 
 import android.provider.BaseColumns;
 

@@ -1,4 +1,4 @@
-package com.example.proyecto;
+package com.example.proyecto.ui.actividades;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,7 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.proyecto.VoluntariadoContract.ActividadEntry;
+import com.example.proyecto.R;
+import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
+import com.example.proyecto.data.VoluntariadoDbHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

@@ -1,4 +1,4 @@
-package com.example.proyecto;
+package com.example.proyecto.ui.actividades;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,7 +15,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.proyecto.VoluntariadoContract.ActividadEntry;
+import com.example.proyecto.R;
+import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
+import com.example.proyecto.data.VoluntariadoDbHelper;
 
 public class DetalleActividadActivity extends AppCompatActivity {
 

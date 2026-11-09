@@ -1,11 +1,15 @@
-package com.example.proyecto;
+package com.example.proyecto.ui.menu;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.database.Cursor;
-import com.example.proyecto.VoluntariadoContract.UsuarioEntry;
+
+import com.example.proyecto.R;
+import com.example.proyecto.data.VoluntariadoContract.UsuarioEntry;
+import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.ui.auth.MainActivity;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
