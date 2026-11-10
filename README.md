@@ -67,7 +67,7 @@ Base local `voluntariado.db` con tres tablas:
 
 1. Clonar el repositorio y abrirlo con Android Studio.
 2. Esperar a que Gradle sincronice las dependencias.
-3. Para ver el mapa, colocar una clave de Google Maps válida en `app/src/main/AndroidManifest.xml`, en el valor de `com.google.android.geo.API_KEY`. Sin una clave válida la app funciona, pero el mapa se muestra sin los dibujos de calles.
+3. Para ver el mapa, agregar en 'local.properties' la linea 'MAPS_API_KEY=Clave'. Sin una clave válida la app funciona, pero el mapa se muestra sin los dibujos de las calles.
 4. Ejecutar la aplicación en un emulador con Google Play o en un teléfono.
 5. Registrar un usuario nuevo, ya que la base de datos comienza vacía.
 

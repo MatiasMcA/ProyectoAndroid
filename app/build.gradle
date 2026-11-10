@@ -2,6 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream {localProperties.load(it)}
+}
+def mapsApiKey = localProperties.getProperty("MAPS_API_KEY", "PENDIENTE")
+
 android {
     namespace 'com.example.proyecto'
     compileSdk {
@@ -14,6 +21,7 @@ android {
         targetSdk 37
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [MAPS_API_KEY: mapsApiKey]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
