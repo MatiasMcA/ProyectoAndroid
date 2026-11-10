@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.menu.PerfilActivity">
+    tools:context=".PerfilActivity">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnVolver"
@@ -23,7 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:text="@string/perfil_titulo"
         android:textSize="26sp"
@@ -32,17 +32,43 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnVolver" />
 
+    <ImageView
+        android:id="@+id/ivFotoPerfil"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:background="#E5E7EB"
+        android:contentDescription="@string/desc_foto_perfil"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_camera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloPerfil" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTomarFoto"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/btn_tomar_foto"
+        app:layout_constraintBottom_toBottomOf="@id/ivFotoPerfil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivFotoPerfil"
+        app:layout_constraintTop_toTopOf="@id/ivFotoPerfil" />
+
     <TextView
         android:id="@+id/tvNombrePerfil"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTituloPerfil" />
+        app:layout_constraintTop_toBottomOf="@id/ivFotoPerfil" />
 
     <TextView
         android:id="@+id/tvCorreoPerfil"
