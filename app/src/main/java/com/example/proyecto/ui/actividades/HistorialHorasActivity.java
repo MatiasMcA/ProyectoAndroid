@@ -1,11 +1,7 @@
 package com.example.proyecto.ui.actividades;
 
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,19 +9,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto.R;
-import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
+import com.example.proyecto.adapter.InscripcionAdapter;
 import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.model.Inscripcion;
+import com.example.proyecto.util.EjecutorBd;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class HistorialHorasActivity extends AppCompatActivity {
 
-    private ListView lvHistorial;
     private TextView tvTotalHoras;
+    private TextView tvVacioHistorial;
+    private InscripcionAdapter adapter;
+    private final ArrayList<Inscripcion> completadas = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,39 +39,36 @@ public class HistorialHorasActivity extends AppCompatActivity {
         });
         findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
-        lvHistorial = findViewById(R.id.lvHistorial);
+        RecyclerView rvHistorial = findViewById(R.id.rvHistorial);
         tvTotalHoras = findViewById(R.id.tvTotalHoras);
+        tvVacioHistorial = findViewById(R.id.tvVacioHistorial);
 
-        String correo = getIntent().getStringExtra("correo");
-        VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(this);
-        cargarHistorial(dbHelper, correo);
+        adapter = new InscripcionAdapter(completadas, null);
+        rvHistorial.setLayoutManager(new LinearLayoutManager(this));
+        rvHistorial.setAdapter(adapter);
+
+        cargarHistorial(getIntent().getStringExtra("correo"));
     }
 
-    private void cargarHistorial(VoluntariadoDbHelper dbHelper, String correo) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handlerPrincipal = new Handler(Looper.getMainLooper());
-
-        executor.execute(() -> {
+    private void cargarHistorial(String correo) {
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
             long usuarioId = dbHelper.obtenerUsuarioId(correo);
-            ArrayList<String> textos = new ArrayList<>();
-            Cursor cursor = dbHelper.obtenerInscripciones(usuarioId, VoluntariadoDbHelper.ESTADO_COMPLETADA);
-            while (cursor.moveToNext()) {
-                String nombre = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_NOMBRE));
-                int horas = cursor.getInt(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_HORAS));
-                textos.add(getString(R.string.historial_item, nombre, horas));
-            }
-            cursor.close();
+            ArrayList<Inscripcion> lista = dbHelper.obtenerListaInscripciones(
+                    usuarioId, VoluntariadoDbHelper.ESTADO_COMPLETADA);
             int total = dbHelper.obtenerTotalHoras(usuarioId);
             dbHelper.close();
 
-            handlerPrincipal.post(() -> {
+            EjecutorBd.enPrincipal(() -> {
                 if (isDestroyed()) {
                     return;
                 }
-                lvHistorial.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, textos));
+                completadas.clear();
+                completadas.addAll(lista);
+                adapter.notifyDataSetChanged();
                 tvTotalHoras.setText(getString(R.string.historial_total, total));
+                tvVacioHistorial.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
             });
         });
-        executor.shutdown();
     }
 }
