@@ -102,4 +102,6 @@
     <string name="item_fecha_lugar">%1$s - %2$s</string>
     <string name="item_horas">Horas: %1$d</string>
     <string name="historial_vacio">Aún no tienes actividades completadas</string>
+
+    <string name="sede_institucion">Santo Tomás Iquique</string>
 </resources>

@@ -94,7 +94,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         String correo = getIntent().getStringExtra("correo");
         tvCorreoPerfil.setText(getString(R.string.perfil_correo, correo));
-        tvSedePerfil.setText(getString(R.string.perfil_sede, sede));
+        tvSedePerfil.setText(getString(R.string.perfil_sede, getString(R.string.sede_institucion)));
         cargarDatosUsuario(correo);
 
         btnTomarFoto.setOnClickListener(v -> tomarFoto());

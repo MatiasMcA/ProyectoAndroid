@@ -14,6 +14,9 @@ import com.example.proyecto.data.VoluntariadoContract.UsuarioEntry;
 import com.example.proyecto.util.SeguridadUtil;
 
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class VoluntariadoDbHelper extends SQLiteOpenHelper {
 
@@ -148,19 +151,19 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
     }
 
     private void insertarActividadesIniciales(SQLiteDatabase db) {
-        insertarActividad(db, "Apoyo escolar comuna", "20/10/2026",
+        insertarActividad(db, "Apoyo escolar comuna", fechaEnDias(1),
                 "Escuela Básica San Martín",
                 "Apoyo en tareas y reforzamiento escolar para niños.",
                 3, 10, -20.2150, -70.1480);
-        insertarActividad(db, "Jornada de reciclaje", "24/10/2026",
+        insertarActividad(db, "Jornada de reciclaje", fechaEnDias(5),
                 "Plaza Prat",
                 "Recolección y clasificación de materiales reciclables.",
                 2, 15, -20.2133, -70.1520);
-        insertarActividad(db, "Acompañamiento adulto mayor", "28/10/2026",
+        insertarActividad(db, "Acompañamiento adulto mayor", fechaEnDias(9),
                 "Hogar de Ancianos Santo Tomás",
                 "Actividades recreativas con adultos mayores del hogar.",
                 4, 8, -20.2250, -70.1450);
-        insertarActividad(db, "Limpieza de playa", "31/10/2026",
+        insertarActividad(db, "Limpieza de playa", fechaEnDias(14),
                 "Playa Cavancha",
                 "Limpieza de la playa junto a otros voluntarios.",
                 3, 20, -20.2349, -70.1417);
@@ -384,5 +387,11 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
             }
         }
         return lista;
+    }
+
+    private String fechaEnDias(int dias) {
+        Calendar calendario = Calendar.getInstance();
+        calendario.add(Calendar.DAY_OF_YEAR, dias);
+        return new SimpleDateFormat("dd/mm/yyyy", Locale.US).format(calendario.getTime());
     }
 }
