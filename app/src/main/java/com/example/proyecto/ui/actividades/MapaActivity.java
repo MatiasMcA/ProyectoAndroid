@@ -1,42 +1,46 @@
 package com.example.proyecto.ui.actividades;
 
-import android.database.Cursor;
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyecto.R;
 import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
 import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.util.EjecutorBd;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 public class MapaActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
-    private VoluntariadoDbHelper dbHelper;
     private static final int LOCATION_PERMISSION_REQ_CODE = 100;
+
+    private GoogleMap mMap;
     private FusedLocationProviderClient fusedClient;
+    private boolean ubicacionCentrada = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +52,8 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        findViewById(R.id.btnVolver).setOnClickListener(view -> finish());
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
-        dbHelper = new VoluntariadoDbHelper(this);
         fusedClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -66,23 +69,37 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void agregarMarcadoresActividades() {
-        Cursor cursor = dbHelper.obtenerTodasLasActividades();
-        LatLng primera = null;
-        while (cursor.moveToNext()) {
-            String nombre = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_NOMBRE));
-            String lugar = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LUGAR));
-            double latitud = cursor.getDouble(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LATITUD));
-            double longitud = cursor.getDouble(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LONGITUD));
-            LatLng posicion = new LatLng(latitud, longitud);
-            mMap.addMarker(new MarkerOptions().position(posicion).title(nombre).snippet(lugar));
-            if (primera == null) {
-                primera = posicion;
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
+            ArrayList<String> nombres = new ArrayList<>();
+            ArrayList<String> lugares = new ArrayList<>();
+            ArrayList<LatLng> posiciones = new ArrayList<>();
+            try (Cursor cursor = dbHelper.obtenerTodasLasActividades()) {
+                while (cursor.moveToNext()) {
+                    nombres.add(cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_NOMBRE)));
+                    lugares.add(cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LUGAR)));
+                    double latitud = cursor.getDouble(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LATITUD));
+                    double longitud = cursor.getDouble(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LONGITUD));
+                    posiciones.add(new LatLng(latitud, longitud));
+                }
             }
-        }
-        cursor.close();
-        if (primera != null) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(primera, 13f));
-        }
+            dbHelper.close();
+
+            EjecutorBd.enPrincipal(() -> {
+                if (isDestroyed() || mMap == null) {
+                    return;
+                }
+                for (int i = 0; i < posiciones.size(); i++) {
+                    mMap.addMarker(new MarkerOptions()
+                            .position(posiciones.get(i))
+                            .title(nombres.get(i))
+                            .snippet(lugares.get(i)));
+                }
+                if (!posiciones.isEmpty() && !ubicacionCentrada) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posiciones.get(0), 13f));
+                }
+            });
+        });
     }
 
     private void verificarPermisoUbicacion() {
@@ -126,17 +143,16 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return;
                     }
                     LatLng posicion = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.addMarker(new MarkerOptions()
+                    Marker marcador = mMap.addMarker(new MarkerOptions()
                             .position(posicion)
                             .title(getString(R.string.marcador_usuario))
+                            .snippet(location.getLatitude() + ", " + location.getLongitude())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    if (marcador != null) {
+                        marcador.showInfoWindow();
+                    }
+                    ubicacionCentrada = true;
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion, 14f));
                 });
-    }
-
-    @Override
-    protected void onDestroy() {
-        dbHelper.close();
-        super.onDestroy();
     }
 }
