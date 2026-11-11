@@ -1,9 +1,7 @@
 package com.example.proyecto.ui.actividades;
 
-import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,24 +11,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto.R;
-import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
-import com.example.proyecto.data.VoluntariadoContract.InscripcionEntry;
+import com.example.proyecto.adapter.InscripcionAdapter;
 import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.model.Inscripcion;
+import com.example.proyecto.util.EjecutorBd;
 
 import java.util.ArrayList;
 
 public class MisInscripcionesActivity extends AppCompatActivity {
 
-    private ListView lvInscripciones;
+    private RecyclerView rvInscripciones;
     private TextView tvVacio;
-    private ArrayAdapter<String> adapter;
-    private final ArrayList<String> textos = new ArrayList<>();
-    private final ArrayList<Long> inscripcionIds = new ArrayList<>();
-    private final ArrayList<Long> actividadIds = new ArrayList<>();
-    private VoluntariadoDbHelper dbHelper;
-    private long usuarioId;
+    private InscripcionAdapter adapter;
+    private final ArrayList<Inscripcion> inscripciones = new ArrayList<>();
+    private String correo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,71 +42,89 @@ public class MisInscripcionesActivity extends AppCompatActivity {
         });
         findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
-        lvInscripciones = findViewById(R.id.lvInscripciones);
+        rvInscripciones = findViewById(R.id.rvInscripciones);
         tvVacio = findViewById(R.id.tvVacio);
+        correo = getIntent().getStringExtra("correo");
 
-        String correo = getIntent().getStringExtra("correo");
-        dbHelper = new VoluntariadoDbHelper(this);
-        usuarioId = dbHelper.obtenerUsuarioId(correo);
-
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, textos);
-        lvInscripciones.setAdapter(adapter);
-        lvInscripciones.setEmptyView(tvVacio);
-        lvInscripciones.setOnItemClickListener((parent, view, position, id) ->
-                mostrarOpciones(position));
+        adapter = new InscripcionAdapter(inscripciones, this::mostrarOpciones);
+        rvInscripciones.setLayoutManager(new LinearLayoutManager(this));
+        rvInscripciones.setAdapter(adapter);
 
         cargarInscripciones();
     }
 
     private void cargarInscripciones() {
-        textos.clear();
-        inscripcionIds.clear();
-        actividadIds.clear();
-        Cursor cursor = dbHelper.obtenerInscripciones(usuarioId, VoluntariadoDbHelper.ESTADO_INSCRITO);
-        while (cursor.moveToNext()) {
-            inscripcionIds.add(cursor.getLong(cursor.getColumnIndexOrThrow(InscripcionEntry.ALIAS_INSCRIPCION_ID)));
-            actividadIds.add(cursor.getLong(cursor.getColumnIndexOrThrow(InscripcionEntry.ALIAS_ACTIVIDAD_ID)));
-            String nombre = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_NOMBRE));
-            String fecha = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_FECHA));
-            String lugar = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LUGAR));
-            textos.add(nombre + "\n" + fecha + " - " + lugar);
-        }
-        cursor.close();
-        adapter.notifyDataSetChanged();
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
+            long usuarioId = dbHelper.obtenerUsuarioId(correo);
+            ArrayList<Inscripcion> lista = dbHelper.obtenerListaInscripciones(
+                    usuarioId, VoluntariadoDbHelper.ESTADO_INSCRITO);
+            dbHelper.close();
+
+            EjecutorBd.enPrincipal(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                inscripciones.clear();
+                inscripciones.addAll(lista);
+                adapter.notifyDataSetChanged();
+                tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
+            });
+        });
     }
 
-    private void mostrarOpciones(int position) {
+    private void mostrarOpciones(Inscripcion inscripcion) {
         String[] opciones = {getString(R.string.opcion_completar), getString(R.string.opcion_cancelar)};
         new AlertDialog.Builder(this)
                 .setTitle(R.string.opciones_titulo)
                 .setItems(opciones, (dialog, which) -> {
                     if (which == 0) {
-                        dbHelper.completarInscripcion(inscripcionIds.get(position));
-                        cargarInscripciones();
-                        Toast.makeText(this, R.string.msg_inscripcion_completada, Toast.LENGTH_SHORT).show();
+                        completar(inscripcion);
                     } else {
-                        mostrarDialogoCancelar(position);
+                        confirmarCancelacion(inscripcion);
                     }
                 })
                 .show();
     }
 
-    private void mostrarDialogoCancelar(int position) {
+    private void confirmarCancelacion(Inscripcion inscripcion) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.cancelar_titulo)
                 .setMessage(R.string.cancelar_mensaje)
-                .setPositiveButton(R.string.cancelar_si, (dialog, which) -> {
-                    dbHelper.cancelarInscripcion(inscripcionIds.get(position), actividadIds.get(position));
-                    cargarInscripciones();
-                    Toast.makeText(this, R.string.msg_inscripcion_cancelada, Toast.LENGTH_SHORT).show();
-                })
+                .setPositiveButton(R.string.cancelar_si, (dialog, which) -> cancelar(inscripcion))
                 .setNegativeButton(R.string.cancelar_no, null)
                 .show();
     }
 
-    @Override
-    protected void onDestroy() {
-        dbHelper.close();
-        super.onDestroy();
+    private void completar(Inscripcion inscripcion) {
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
+            dbHelper.completarInscripcion(inscripcion.getInscripcionId());
+            dbHelper.close();
+
+            EjecutorBd.enPrincipal(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                Toast.makeText(this, R.string.msg_inscripcion_completada, Toast.LENGTH_SHORT).show();
+                cargarInscripciones();
+            });
+        });
+    }
+
+    private void cancelar(Inscripcion inscripcion) {
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
+            dbHelper.cancelarInscripcion(inscripcion.getInscripcionId(), inscripcion.getActividadId());
+            dbHelper.close();
+
+            EjecutorBd.enPrincipal(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                Toast.makeText(this, R.string.msg_inscripcion_cancelada, Toast.LENGTH_SHORT).show();
+                cargarInscripciones();
+            });
+        });
     }
 }
