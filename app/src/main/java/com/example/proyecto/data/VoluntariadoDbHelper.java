@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.proyecto.model.Actividad;
+import com.example.proyecto.model.Inscripcion;
 import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
 import com.example.proyecto.data.VoluntariadoContract.InscripcionEntry;
 import com.example.proyecto.data.VoluntariadoContract.UsuarioEntry;
@@ -367,5 +368,21 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
             }
             return 0;
         }
+    }
+
+    public ArrayList<Inscripcion> obtenerListaInscripciones(long usuarioId, String estado) {
+        ArrayList<Inscripcion> lista = new ArrayList<>();
+        try (Cursor cursor = obtenerInscripciones(usuarioId, estado)) {
+            while (cursor.moveToNext()) {
+                long inscripcionId = cursor.getLong(cursor.getColumnIndexOrThrow(InscripcionEntry.ALIAS_INSCRIPCION_ID));
+                long actividadId = cursor.getLong(cursor.getColumnIndexOrThrow(InscripcionEntry.ALIAS_ACTIVIDAD_ID));
+                String nombre = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_NOMBRE));
+                String fecha = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_FECHA));
+                String lugar = cursor.getString(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_LUGAR));
+                int horas = cursor.getInt(cursor.getColumnIndexOrThrow(ActividadEntry.COLUMN_HORAS));
+                lista.add(new Inscripcion(inscripcionId, actividadId, nombre, fecha, lugar, horas));
+            }
+        }
+        return lista;
     }
 }

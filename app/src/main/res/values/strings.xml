@@ -98,4 +98,8 @@
     <string name="msg_foto_guardada">Foto actualizada</string>
     <string name="error_sin_camara">No hay una aplicación de cámara disponible</string>
     <string name="error_foto">No se pudo preparar la foto</string>
+
+    <string name="item_fecha_lugar">%1$s - %2$s</string>
+    <string name="item_horas">Horas: %1$d</string>
+    <string name="historial_vacio">Aún no tienes actividades completadas</string>
 </resources>
