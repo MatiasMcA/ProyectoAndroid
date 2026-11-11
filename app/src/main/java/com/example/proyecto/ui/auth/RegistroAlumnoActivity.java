@@ -3,10 +3,11 @@ package com.example.proyecto.ui.auth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Spinner;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyecto.R;
 import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.util.EjecutorBd;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -29,14 +31,15 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
     private TextInputEditText etCorreo;
     private TextInputEditText etPassword;
     private TextInputEditText etConfirmar;
+    private Spinner spCarrera;
     private Button btnRegistrarme;
     private TextView tvIrLogin;
-    private Spinner spCarrera;
-    private VoluntariadoDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_registro_alumno);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -44,7 +47,6 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
         tilNombre = findViewById(R.id.tilNombre);
@@ -55,14 +57,12 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
         etCorreo = findViewById(R.id.etCorreo);
         etPassword = findViewById(R.id.etPassword);
         etConfirmar = findViewById(R.id.etConfirmar);
+        spCarrera = findViewById(R.id.spCarrera);
         btnRegistrarme = findViewById(R.id.btnRegistrarme);
         tvIrLogin = findViewById(R.id.tvIrLogin);
-        spCarrera = findViewById(R.id.spCarrera);
-        dbHelper = new VoluntariadoDbHelper(this);
 
-        btnRegistrarme.setOnClickListener(view -> validarRegistro());
-
-        tvIrLogin.setOnClickListener(view -> irALogin());
+        btnRegistrarme.setOnClickListener(v -> validarRegistro());
+        tvIrLogin.setOnClickListener(v -> irALogin());
     }
 
     private void validarRegistro() {
@@ -70,6 +70,7 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
         String correo = etCorreo.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmar = etConfirmar.getText().toString().trim();
+        String carrera = spCarrera.getSelectedItem().toString();
 
         tilNombre.setError(null);
         tilCorreo.setError(null);
@@ -92,7 +93,7 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
         }
 
         if (password.length() < 6) {
-            tilPassword.setError((getString(R.string.error_password_corta)));
+            tilPassword.setError(getString(R.string.error_password_corta));
             return;
         }
 
@@ -101,31 +102,34 @@ public class RegistroAlumnoActivity extends AppCompatActivity {
             return;
         }
 
-        if (dbHelper.existeCorreo(correo)) {
-            tilCorreo.setError(getString(R.string.error_correo_existente));
-            return;
-        }
+        btnRegistrarme.setEnabled(false);
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
+            boolean existe = dbHelper.existeCorreo(correo);
+            long resultado = existe ? -1 : dbHelper.insertarUsuario(nombre, correo, password, carrera);
+            dbHelper.close();
 
-        String carrera = spCarrera.getSelectedItem().toString();
-        long resultado = dbHelper.insertarUsuario(nombre, correo, password, carrera);
-
-        if (resultado == -1) {
-            Toast.makeText(this, R.string.error_registro, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Toast.makeText(this, R.string.msg_registro_ok, Toast.LENGTH_SHORT).show();
-        irALogin();
+            EjecutorBd.enPrincipal(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                btnRegistrarme.setEnabled(true);
+                if (existe) {
+                    tilCorreo.setError(getString(R.string.error_correo_existente));
+                    return;
+                }
+                if (resultado == -1) {
+                    Toast.makeText(this, R.string.error_registro, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this, R.string.msg_registro_ok, Toast.LENGTH_SHORT).show();
+                irALogin();
+            });
+        });
     }
 
     private void irALogin() {
         startActivity(new Intent(this, LoginAlumnoActivity.class));
         finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        dbHelper.close();
-        super.onDestroy();
     }
 }

@@ -3,6 +3,7 @@ package com.example.proyecto.ui.auth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,9 +14,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.proyecto.ui.menu.MenuPrincipalActivity;
 import com.example.proyecto.R;
 import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.ui.menu.MenuPrincipalActivity;
+import com.example.proyecto.util.EjecutorBd;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -27,11 +29,12 @@ public class LoginAlumnoActivity extends AppCompatActivity {
     private TextInputEditText etPassword;
     private Button btnIngresar;
     private TextView tvIrRegistro;
-    private VoluntariadoDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login_alumno);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -39,7 +42,6 @@ public class LoginAlumnoActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
         tilCorreo = findViewById(R.id.tilCorreo);
@@ -48,11 +50,10 @@ public class LoginAlumnoActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnIngresar = findViewById(R.id.btnIngresar);
         tvIrRegistro = findViewById(R.id.tvIrRegistro);
-        dbHelper = new VoluntariadoDbHelper(this);
 
-        btnIngresar.setOnClickListener(view -> validarLogin());
+        btnIngresar.setOnClickListener(v -> validarLogin());
 
-        tvIrRegistro.setOnClickListener(view ->
+        tvIrRegistro.setOnClickListener(v ->
                 startActivity(new Intent(this, RegistroAlumnoActivity.class)));
     }
 
@@ -78,21 +79,27 @@ public class LoginAlumnoActivity extends AppCompatActivity {
             return;
         }
 
-        if (!dbHelper.validarLogin(correo, password)) {
-            tilPassword.setError(getString(R.string.error_credenciales));
-            return;
-        }
+        btnIngresar.setEnabled(false);
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
+            boolean valido = dbHelper.validarLogin(correo, password);
+            dbHelper.close();
 
-        Toast.makeText(this, R.string.msg_login_ok, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MenuPrincipalActivity.class);
-        intent.putExtra("correo", correo);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        dbHelper.close();
-        super.onDestroy();
+            EjecutorBd.enPrincipal(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                btnIngresar.setEnabled(true);
+                if (!valido) {
+                    tilPassword.setError(getString(R.string.error_credenciales));
+                    return;
+                }
+                Toast.makeText(this, R.string.msg_login_ok, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, MenuPrincipalActivity.class);
+                intent.putExtra("correo", correo);
+                startActivity(intent);
+                finish();
+            });
+        });
     }
 }
