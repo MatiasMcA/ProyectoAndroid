@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -72,6 +73,9 @@
             android:value="${MAPS_API_KEY}" />
         <activity
             android:name=".ui.actividades.MapaActivity"
+            android:exported="false" />
+        <receiver
+            android:name=".util.RecordatorioReceiver"
             android:exported="false" />
     </application>
 

@@ -104,4 +104,8 @@
     <string name="historial_vacio">Aún no tienes actividades completadas</string>
 
     <string name="sede_institucion">Santo Tomás Iquique</string>
+
+    <string name="canal_recordatorios">Recordatorios de actividades</string>
+    <string name="recordatorio_titulo">Recordatorio de voluntariado</string>
+    <string name="recordatorio_texto">%1$s el %2$s en %3$s</string>
 </resources>

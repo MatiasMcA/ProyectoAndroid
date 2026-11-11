@@ -4,6 +4,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +43,7 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         tvBienvenida = findViewById(R.id.tvBienvenida);
         String correo = getIntent().getStringExtra("correo");
         cargarNombre(correo);
+        pedirPermisoNotificaciones();
 
         findViewById(R.id.btnVerActividades).setOnClickListener(v ->
                 abrirPantalla(ListaActividadesActivity.class, correo));
@@ -75,5 +81,14 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         Intent intent = new Intent(this, destino);
         intent.putExtra("correo", correo);
         startActivity(intent);
+    }
+
+    private void pedirPermisoNotificaciones() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 200);
+        }
     }
 }

@@ -392,6 +392,6 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
     private String fechaEnDias(int dias) {
         Calendar calendario = Calendar.getInstance();
         calendario.add(Calendar.DAY_OF_YEAR, dias);
-        return new SimpleDateFormat("dd/mm/yyyy", Locale.US).format(calendario.getTime());
+        return new SimpleDateFormat("dd/MM/yyyy", Locale.US).format(calendario.getTime());
     }
 }

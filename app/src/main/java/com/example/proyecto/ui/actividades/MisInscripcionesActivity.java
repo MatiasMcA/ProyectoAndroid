@@ -19,6 +19,7 @@ import com.example.proyecto.adapter.InscripcionAdapter;
 import com.example.proyecto.data.VoluntariadoDbHelper;
 import com.example.proyecto.model.Inscripcion;
 import com.example.proyecto.util.EjecutorBd;
+import com.example.proyecto.util.RecordatorioHelper;
 
 import java.util.ArrayList;
 
@@ -107,6 +108,7 @@ public class MisInscripcionesActivity extends AppCompatActivity {
                     return;
                 }
                 Toast.makeText(this, R.string.msg_inscripcion_completada, Toast.LENGTH_SHORT).show();
+                RecordatorioHelper.cancelar(getApplicationContext(), inscripcion.getActividadId());
                 cargarInscripciones();
             });
         });
@@ -123,6 +125,7 @@ public class MisInscripcionesActivity extends AppCompatActivity {
                     return;
                 }
                 Toast.makeText(this, R.string.msg_inscripcion_cancelada, Toast.LENGTH_SHORT).show();
+                RecordatorioHelper.cancelar(getApplicationContext(), inscripcion.getActividadId());
                 cargarInscripciones();
             });
         });

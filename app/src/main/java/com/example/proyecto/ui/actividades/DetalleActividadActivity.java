@@ -19,6 +19,7 @@ import com.example.proyecto.R;
 import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
 import com.example.proyecto.data.VoluntariadoDbHelper;
 import com.example.proyecto.util.EjecutorBd;
+import com.example.proyecto.util.RecordatorioHelper;
 
 public class DetalleActividadActivity extends AppCompatActivity {
 
@@ -31,6 +32,9 @@ public class DetalleActividadActivity extends AppCompatActivity {
     private long actividadId;
     private double latitud;
     private double longitud;
+    private String nombreActividad;
+    private String fechaActividad;
+    private String lugarActividad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,9 @@ public class DetalleActividadActivity extends AppCompatActivity {
                 tvDescripcion.setText(datos[3]);
                 latitud = coordenadas[0];
                 longitud = coordenadas[1];
+                nombreActividad = datos[0];
+                fechaActividad = datos[1];
+                lugarActividad = datos[2];
             });
         });
     }
@@ -105,6 +112,8 @@ public class DetalleActividadActivity extends AppCompatActivity {
                 btnInscribirme.setEnabled(true);
                 if (resultado == VoluntariadoDbHelper.RESULTADO_OK) {
                     Toast.makeText(this, R.string.msg_inscripcion_ok, Toast.LENGTH_SHORT).show();
+                    RecordatorioHelper.programar(getApplicationContext(), actividadId,
+                            nombreActividad, fechaActividad, lugarActividad);
                     finish();
                 } else if (resultado == VoluntariadoDbHelper.RESULTADO_YA_INSCRITO) {
                     Toast.makeText(this, R.string.error_ya_inscrito, Toast.LENGTH_SHORT).show();
