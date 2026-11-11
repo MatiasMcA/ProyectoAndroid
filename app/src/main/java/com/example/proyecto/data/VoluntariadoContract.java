@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 public final class VoluntariadoContract {
 
     public static final String DATABASE_NAME = "voluntariado.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     private VoluntariadoContract() {
     }

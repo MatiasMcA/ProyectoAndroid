@@ -10,6 +10,7 @@ import com.example.proyecto.model.Actividad;
 import com.example.proyecto.data.VoluntariadoContract.ActividadEntry;
 import com.example.proyecto.data.VoluntariadoContract.InscripcionEntry;
 import com.example.proyecto.data.VoluntariadoContract.UsuarioEntry;
+import com.example.proyecto.util.SeguridadUtil;
 
 import java.util.ArrayList;
 
@@ -169,7 +170,7 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         ContentValues valores = new ContentValues();
         valores.put(UsuarioEntry.COLUMN_NOMBRE, nombre);
         valores.put(UsuarioEntry.COLUMN_CORREO, correo);
-        valores.put(UsuarioEntry.COLUMN_PASSWORD, password);
+        valores.put(UsuarioEntry.COLUMN_PASSWORD, SeguridadUtil.generarHash(password));
         valores.put(UsuarioEntry.COLUMN_CARRERA, carrera);
         return db.insert(UsuarioEntry.TABLE_NAME, null, valores);
     }
@@ -188,11 +189,15 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
     public boolean validarLogin(String correo, String password) {
         SQLiteDatabase db = getReadableDatabase();
         try (Cursor cursor = db.query(UsuarioEntry.TABLE_NAME,
-                new String[]{UsuarioEntry._ID},
-                UsuarioEntry.COLUMN_CORREO + " = ? AND " + UsuarioEntry.COLUMN_PASSWORD + " = ?",
-                new String[]{correo, password},
+                new String[]{UsuarioEntry.COLUMN_PASSWORD},
+                UsuarioEntry.COLUMN_CORREO + " = ?",
+                new String[]{correo},
                 null, null, null)) {
-            return cursor.getCount() > 0;
+            if (!cursor.moveToFirst()) {
+                return false;
+            }
+            String almacenado = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_PASSWORD));
+            return SeguridadUtil.verificar(password, almacenado);
         }
     }
 
