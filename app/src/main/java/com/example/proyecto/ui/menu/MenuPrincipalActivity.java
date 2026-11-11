@@ -1,19 +1,9 @@
 package com.example.proyecto.ui.menu;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
 import android.database.Cursor;
-
-import com.example.proyecto.ui.actividades.HistorialHorasActivity;
-import com.example.proyecto.ui.actividades.ListaActividadesActivity;
-import com.example.proyecto.ui.actividades.MapaActivity;
-import com.example.proyecto.ui.actividades.MisInscripcionesActivity;
-import com.example.proyecto.R;
-import com.example.proyecto.data.VoluntariadoContract.UsuarioEntry;
-import com.example.proyecto.data.VoluntariadoDbHelper;
+import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,15 +11,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.proyecto.R;
+import com.example.proyecto.data.VoluntariadoContract.UsuarioEntry;
+import com.example.proyecto.data.VoluntariadoDbHelper;
+import com.example.proyecto.ui.actividades.HistorialHorasActivity;
+import com.example.proyecto.ui.actividades.ListaActividadesActivity;
+import com.example.proyecto.ui.actividades.MapaActivity;
+import com.example.proyecto.ui.actividades.MisInscripcionesActivity;
+import com.example.proyecto.util.EjecutorBd;
+
 public class MenuPrincipalActivity extends AppCompatActivity {
 
     private TextView tvBienvenida;
-    private Button btnVerActividades;
-    private Button btnMiHistorial;
-    private Button btnMiPerfil;
-    private Button btnMisInscripciones;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,30 +36,39 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         });
 
         tvBienvenida = findViewById(R.id.tvBienvenida);
-        btnVerActividades = findViewById(R.id.btnVerActividades);
-        btnMiHistorial = findViewById(R.id.btnMiHistorial);
-        btnMisInscripciones = findViewById(R.id.btnMisInscripciones);
-        btnMiPerfil = findViewById(R.id.btnMiPerfil);
-
         String correo = getIntent().getStringExtra("correo");
-        VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(this);
-        Cursor cursor = dbHelper.obtenerUsuario(correo);
-        String nombre = "";
-        if (cursor.moveToFirst()) {
-            nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
-        }
-        cursor.close();
-        dbHelper.close();
-        tvBienvenida.setText(getString(R.string.menu_bienvenida, nombre));
+        cargarNombre(correo);
 
-        btnVerActividades.setOnClickListener(v -> abrirPantalla(ListaActividadesActivity.class, correo));
+        findViewById(R.id.btnVerActividades).setOnClickListener(v ->
+                abrirPantalla(ListaActividadesActivity.class, correo));
+        findViewById(R.id.btnMisInscripciones).setOnClickListener(v ->
+                abrirPantalla(MisInscripcionesActivity.class, correo));
+        findViewById(R.id.btnVerMapa).setOnClickListener(v ->
+                abrirPantalla(MapaActivity.class, correo));
+        findViewById(R.id.btnMiHistorial).setOnClickListener(v ->
+                abrirPantalla(HistorialHorasActivity.class, correo));
+        findViewById(R.id.btnMiPerfil).setOnClickListener(v ->
+                abrirPantalla(PerfilActivity.class, correo));
+    }
 
-        btnMiHistorial.setOnClickListener(v -> abrirPantalla(HistorialHorasActivity.class, correo));
+    private void cargarNombre(String correo) {
+        EjecutorBd.enSegundoPlano(() -> {
+            VoluntariadoDbHelper dbHelper = new VoluntariadoDbHelper(getApplicationContext());
+            String[] nombre = {""};
+            try (Cursor cursor = dbHelper.obtenerUsuario(correo)) {
+                if (cursor.moveToFirst()) {
+                    nombre[0] = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
+                }
+            }
+            dbHelper.close();
 
-        btnMiPerfil.setOnClickListener(v -> abrirPantalla(PerfilActivity.class, correo));
-
-        btnMisInscripciones.setOnClickListener(v -> abrirPantalla(MisInscripcionesActivity.class, correo));
-        findViewById(R.id.btnVerMapa).setOnClickListener(view -> abrirPantalla(MapaActivity.class, correo));
+            EjecutorBd.enPrincipal(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                tvBienvenida.setText(getString(R.string.menu_bienvenida, nombre[0]));
+            });
+        });
     }
 
     private void abrirPantalla(Class<?> destino, String correo) {
