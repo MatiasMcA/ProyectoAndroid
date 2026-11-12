@@ -18,13 +18,34 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+/**
+ * Ayudante de SQLite de VoluntariST.
+ * <p>
+ * Crea las tablas definidas en {@link VoluntariadoContract}, activa las claves foráneas y ofrece las
+ * operaciones de guardar, consultar, actualizar y eliminar (CRUD) de usuarios, actividades e
+ * inscripciones. Todas las consultas usan argumentos parametrizados para evitar inyección SQL.
+ * <p>
+ * Como accede a la base de datos, sus métodos deben llamarse fuera del hilo principal
+ * (por ejemplo, con {@code EjecutorBd}).
+ */
 public class VoluntariadoDbHelper extends SQLiteOpenHelper {
 
+    /** Estado de una inscripción vigente. */
     public static final String ESTADO_INSCRITO = InscripcionEntry.ESTADO_INSCRITO;
+
+    /** Estado de una inscripción completada. */
     public static final String ESTADO_COMPLETADA = InscripcionEntry.ESTADO_COMPLETADA;
+
+    /** Resultado de inscribirUsuario: la inscripción se guardó correctamente. */
     public static final int RESULTADO_OK = 0;
+
+    /** Resultado de inscribirUsuario: el usuario ya estaba inscrito en la actividad. */
     public static final int RESULTADO_YA_INSCRITO = 1;
+
+    /** Resultado de inscribirUsuario: la actividad no tiene cupos disponibles. */
     public static final int RESULTADO_SIN_CUPOS = 2;
+
+    /** Resultado de inscribirUsuario: ocurrió un error al guardar la inscripción. */
     public static final int RESULTADO_ERROR = 3;
 
     private static final String SQL_CREATE_USUARIOS =
@@ -103,17 +124,32 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
             ActividadEntry.COLUMN_LONGITUD
     };
 
+    /**
+     * Crea el ayudante con el nombre y la versión definidos en el contrato.
+     *
+     * @param context contexto de la aplicación, usado para ubicar el archivo de la base de datos
+     */
     public VoluntariadoDbHelper(Context context) {
         super(context, VoluntariadoContract.DATABASE_NAME, null,
                 VoluntariadoContract.DATABASE_VERSION);
     }
 
+    /**
+     * Se ejecuta al abrir la conexión y activa las claves foráneas de SQLite.
+     *
+     * @param db base de datos que se está configurando
+     */
     @Override
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);
         db.setForeignKeyConstraintsEnabled(true);
     }
 
+    /**
+     * Crea las tablas usuarios, actividades e inscripciones y carga las actividades de ejemplo.
+     *
+     * @param db base de datos recién creada
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_USUARIOS);
@@ -122,6 +158,14 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         insertarActividadesIniciales(db);
     }
 
+    /**
+     * Se ejecuta cuando sube la versión del esquema: elimina las tablas (primero las que dependen de
+     * otras) y las vuelve a crear. Los datos existentes se pierden.
+     *
+     * @param db         base de datos que se actualiza
+     * @param oldVersion versión anterior del esquema
+     * @param newVersion versión nueva del esquema
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DELETE_INSCRIPCIONES);
@@ -130,11 +174,31 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Se ejecuta cuando la versión del esquema baja; aplica el mismo procedimiento que onUpgrade.
+     *
+     * @param db         base de datos que se reconstruye
+     * @param oldVersion versión anterior del esquema
+     * @param newVersion versión nueva del esquema
+     */
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
 
+    /**
+     * Inserta una actividad en la tabla actividades.
+     *
+     * @param db          base de datos en la que se inserta
+     * @param nombre      nombre de la actividad
+     * @param fecha       fecha con formato dd/MM/yyyy
+     * @param lugar       lugar donde se realiza
+     * @param descripcion descripción breve de la actividad
+     * @param horas       horas de voluntariado que otorga
+     * @param cupos       cupos disponibles
+     * @param latitud     latitud usada para el marcador del mapa
+     * @param longitud    longitud usada para el marcador del mapa
+     */
     private void insertarActividad(SQLiteDatabase db, String nombre, String fecha, String lugar,
                                    String descripcion, int horas, int cupos,
                                    double latitud, double longitud) {
@@ -150,6 +214,11 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         db.insert(ActividadEntry.TABLE_NAME, null, valores);
     }
 
+    /**
+     * Carga cuatro actividades de ejemplo con fechas relativas al día en que se crea la base de datos.
+     *
+     * @param db base de datos en la que se insertan las actividades
+     */
     private void insertarActividadesIniciales(SQLiteDatabase db) {
         insertarActividad(db, "Apoyo escolar comuna", fechaEnDias(1),
                 "Escuela Básica San Martín",
@@ -169,6 +238,15 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 3, 20, -20.2349, -70.1417);
     }
 
+    /**
+     * Guarda un usuario nuevo. La contraseña se almacena como hash con sal, nunca en texto plano.
+     *
+     * @param nombre   nombre completo del usuario
+     * @param correo   correo del usuario; debe ser único
+     * @param password contraseña escrita por el usuario, antes de protegerla
+     * @param carrera  carrera elegida en el registro
+     * @return identificador de la fila insertada, o -1 si no se pudo guardar (por ejemplo, correo repetido)
+     */
     public long insertarUsuario(String nombre, String correo, String password, String carrera) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues valores = new ContentValues();
@@ -179,6 +257,12 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         return db.insert(UsuarioEntry.TABLE_NAME, null, valores);
     }
 
+    /**
+     * Comprueba si ya existe un usuario con ese correo.
+     *
+     * @param correo correo que se quiere comprobar
+     * @return true si el correo ya está registrado
+     */
     public boolean existeCorreo(String correo) {
         SQLiteDatabase db = getReadableDatabase();
         try (Cursor cursor = db.query(UsuarioEntry.TABLE_NAME,
@@ -190,6 +274,15 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Verifica las credenciales de inicio de sesión: busca al usuario por correo y compara la
+     * contraseña con el hash guardado.
+     *
+     * @param correo   correo escrito por el usuario
+     * @param password contraseña escrita por el usuario
+     * @return true si el correo existe y la contraseña coincide
+     * @throws IllegalArgumentException si la tabla no tiene la columna de contraseña (error de esquema)
+     */
     public boolean validarLogin(String correo, String password) {
         SQLiteDatabase db = getReadableDatabase();
         try (Cursor cursor = db.query(UsuarioEntry.TABLE_NAME,
@@ -205,6 +298,12 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Consulta los datos de un usuario (id, nombre, correo y carrera) a partir de su correo.
+     *
+     * @param correo correo del usuario
+     * @return cursor con a lo más una fila; quien lo recibe debe cerrarlo
+     */
     public Cursor obtenerUsuario(String correo) {
         SQLiteDatabase db = getReadableDatabase();
         return db.query(UsuarioEntry.TABLE_NAME,
@@ -214,6 +313,13 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 null, null, null);
     }
 
+    /**
+     * Obtiene el identificador de un usuario a partir de su correo.
+     *
+     * @param correo correo del usuario
+     * @return id del usuario, o -1 si no existe
+     * @throws IllegalArgumentException si la tabla no tiene la columna de id (error de esquema)
+     */
     public long obtenerUsuarioId(String correo) {
         SQLiteDatabase db = getReadableDatabase();
         try (Cursor cursor = db.query(UsuarioEntry.TABLE_NAME,
@@ -228,6 +334,12 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Obtiene todas las actividades ordenadas por id.
+     *
+     * @return lista de actividades (vacía si no hay ninguna)
+     * @throws IllegalArgumentException si falta una columna esperada en el resultado (error de esquema)
+     */
     public ArrayList<Actividad> obtenerActividades() {
         ArrayList<Actividad> lista = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
@@ -247,6 +359,12 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         return lista;
     }
 
+    /**
+     * Consulta todos los datos de una actividad.
+     *
+     * @param id identificador de la actividad
+     * @return cursor con a lo más una fila; quien lo recibe debe cerrarlo
+     */
     public Cursor obtenerActividad(long id) {
         SQLiteDatabase db = getReadableDatabase();
         return db.query(ActividadEntry.TABLE_NAME,
@@ -256,6 +374,11 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 null, null, null);
     }
 
+    /**
+     * Consulta nombre, lugar y coordenadas de todas las actividades para dibujar los marcadores del mapa.
+     *
+     * @return cursor con una fila por actividad; quien lo recibe debe cerrarlo
+     */
     public Cursor obtenerTodasLasActividades() {
         SQLiteDatabase db = getReadableDatabase();
         return db.query(ActividadEntry.TABLE_NAME,
@@ -264,6 +387,16 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 ActividadEntry._ID + " ASC");
     }
 
+    /**
+     * Inscribe a un usuario en una actividad dentro de una transacción: comprueba que no esté
+     * inscrito y que queden cupos, guarda la inscripción y descuenta un cupo.
+     *
+     * @param usuarioId   identificador del usuario
+     * @param actividadId identificador de la actividad
+     * @return {@link #RESULTADO_OK}, {@link #RESULTADO_YA_INSCRITO}, {@link #RESULTADO_SIN_CUPOS}
+     *         o {@link #RESULTADO_ERROR}
+     * @throws IllegalArgumentException si falta la columna de cupos (error de esquema)
+     */
     public int inscribirUsuario(long usuarioId, long actividadId) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
@@ -317,6 +450,14 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Consulta las inscripciones de un usuario junto con los datos de cada actividad (une las tablas
+     * inscripciones y actividades).
+     *
+     * @param usuarioId identificador del usuario
+     * @param estado    estado que se filtra (Inscrito o Completada)
+     * @return cursor con las inscripciones; quien lo recibe debe cerrarlo
+     */
     public Cursor obtenerInscripciones(long usuarioId, String estado) {
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT i." + InscripcionEntry._ID + " AS " + InscripcionEntry.ALIAS_INSCRIPCION_ID + ", " +
@@ -333,6 +474,12 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         return db.rawQuery(sql, new String[]{String.valueOf(usuarioId), estado});
     }
 
+    /**
+     * Elimina una inscripción y devuelve el cupo a la actividad, dentro de una transacción.
+     *
+     * @param inscripcionId identificador de la inscripción que se elimina
+     * @param actividadId   identificador de la actividad a la que se devuelve el cupo
+     */
     public void cancelarInscripcion(long inscripcionId, long actividadId) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
@@ -349,6 +496,11 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Marca una inscripción como completada (actualiza su estado).
+     *
+     * @param inscripcionId identificador de la inscripción
+     */
     public void completarInscripcion(long inscripcionId) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues valores = new ContentValues();
@@ -358,6 +510,12 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(inscripcionId)});
     }
 
+    /**
+     * Suma las horas de las actividades completadas por un usuario.
+     *
+     * @param usuarioId identificador del usuario
+     * @return total de horas de voluntariado (0 si no tiene ninguna)
+     */
     public int obtenerTotalHoras(long usuarioId) {
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT SUM(a." + ActividadEntry.COLUMN_HORAS + ") FROM " +
@@ -373,6 +531,15 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Convierte el resultado de {@link #obtenerInscripciones(long, String)} en una lista de objetos
+     * {@link Inscripcion}.
+     *
+     * @param usuarioId identificador del usuario
+     * @param estado    estado que se filtra (Inscrito o Completada)
+     * @return lista de inscripciones (vacía si no hay ninguna)
+     * @throws IllegalArgumentException si falta una columna esperada en el resultado (error de esquema)
+     */
     public ArrayList<Inscripcion> obtenerListaInscripciones(long usuarioId, String estado) {
         ArrayList<Inscripcion> lista = new ArrayList<>();
         try (Cursor cursor = obtenerInscripciones(usuarioId, estado)) {
@@ -389,6 +556,12 @@ public class VoluntariadoDbHelper extends SQLiteOpenHelper {
         return lista;
     }
 
+    /**
+     * Calcula la fecha que corresponde a cierta cantidad de días a partir de hoy.
+     *
+     * @param dias días que se suman a la fecha actual
+     * @return fecha con formato dd/MM/yyyy
+     */
     private String fechaEnDias(int dias) {
         Calendar calendario = Calendar.getInstance();
         calendario.add(Calendar.DAY_OF_YEAR, dias);
